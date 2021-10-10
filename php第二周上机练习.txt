@@ -1,0 +1,129 @@
+use educ
+
+insert into teacher values ('101','李新','男','1977-01-12','计算机工程系');
+insert into teacher values ('102','钱军','女','1968-06-04','计算机工程系');
+insert into teacher values ('201','王小花','女','1979-12-23','信息工程系');
+insert into teacher values ('202','张小青','男','1968-08-25','信息工程系');
+
+insert into teaching values ('C01','101','2');
+insert into teaching values ('C02','102','1');
+insert into teaching values ('C03','201','3');
+insert into teaching values ('C04','202','4');
+
+--简单查询
+
+select  * 
+from course limit 10
+
+select 	sname,ssex,sbirthday
+from student
+where speciality='电子商务' 
+
+
+select sdept 
+from student
+
+select sno,cno
+from sc
+where degree>=80 and degree<=90
+
+
+select sname,saddress
+from student
+where sname like '_小' and ssex='男'
+
+select *
+from student 
+where sdept='计算机工程系' or sdept='软件工程系'
+
+--分组与排序
+
+select avg(degree) as'平均成绩'
+from sc
+group by cno
+having cno='C01'
+
+select sno,degree
+from sc
+where cno='C03'
+order by degree desc
+
+select cno,count(sno)as'选课人数'
+from sc
+group by cno
+
+select count(sno)as'选课人数',max(degree)
+from sc
+group by cno
+
+
+select sno
+from sc
+group by sno
+having count(cno)>3
+
+select ssex,count(ssex)as'人数'
+from student
+group by ssex
+
+--多表连接查询
+select student.sno,student.sname,degree
+from student,sc
+where student.sno=sc.sno and sdept='计算机工程系' and ssex='女'
+
+select sno,sname
+from student
+where speciality='数学'
+
+select student.sno,sname,ssex,sbirthday,saddress,sdept,speciality
+from sc,student
+where sc.sno=student.sno and degree<60 and cno='C02'
+
+select sname,ssex,speciality
+from student,sc
+where student.sno=sc.sno and sdept='软件系' and degree>90
+
+--子查询
+
+select degree 
+from sc
+where sno in
+(
+select sno 
+from student
+where sname='李勇'
+)
+
+
+
+
+select student.sno,degree
+from student join sc on student.sno=sc.sno
+where speciality='数据库' and student.sno in
+(select sno
+from sc 
+where degree>80 and degree<90 and cno in
+(select cno
+from course
+where cname='数据库'
+)
+)
+
+
+select tname
+from teacher
+where tno not in
+(select tno
+from teaching
+where cno='C01' 
+)
+
+
+select sname 
+from student
+where sno>(select sno from student where sname='刘晨')
+and sbirthday<(select sbirthday from student where sname='刘晨')
+
+
+alter table teacher change sdept sdept  varchar(20) character set utf8;
+alter database testB default character set utf8;
